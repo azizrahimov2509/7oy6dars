@@ -1,7 +1,21 @@
-import React from "react";
-import { Outlet } from "react-router-dom";
+import React, { useEffect } from "react";
+import { Outlet, useNavigate } from "react-router-dom";
 
 export default function Layout() {
+  const navigate = useNavigate();
+  const user = JSON.parse(localStorage.getItem("user"));
+
+  useEffect(() => {
+    if (!user) {
+      navigate("/login");
+    }
+  }, [user, navigate]);
+
+  const handleLogout = () => {
+    localStorage.removeItem("user");
+    navigate("/login");
+  };
+
   return (
     <>
       <header className=" bg-base-300">
@@ -40,6 +54,9 @@ export default function Layout() {
                 </li>
                 <li>
                   <a>About</a>
+                </li>
+                <li>
+                  <button onClick={handleLogout}>Log out</button>
                 </li>
               </ul>
             </div>
