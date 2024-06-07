@@ -26,7 +26,7 @@ export default function Products() {
         <div className="flex items-center justify-between pb-3 border-b-2 mb-10">
           <h2 className="text-2xl">Products</h2>
           <button
-            className="btn btn-outline btn-sm"
+            className="btn btn-success  btn-sm"
             onClick={() => document.getElementById("my_modal_3").showModal()}
           >
             Add
