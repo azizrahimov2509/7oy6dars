@@ -33,7 +33,7 @@ function Header() {
   }, [theme]);
 
   const handleToggle = () => {
-    setTheme(theme === "light" ? "synthwave" : "light");
+    setTheme(theme === "dark" ? "light" : "dark");
   };
 
   return (
@@ -157,7 +157,7 @@ function Header() {
               type="checkbox"
               className="theme-controller"
               onChange={handleToggle}
-              checked={theme === "dark"}
+              checked={theme === "light"}
             />
             <svg
               className="swap-off fill-current w-10 h-10"
