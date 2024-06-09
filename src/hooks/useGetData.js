@@ -1,8 +1,8 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { collection, getDocs } from "firebase/firestore";
 import { db } from "../firebase/config";
 
-export default function useGetData(collectionName, refresh) {
+export default function useGetData(collectionName, refresh, filter = "rating") {
   const [data, setData] = useState([]);
   const [isPending, setIsPending] = useState(true);
   const [error, setError] = useState({ status: false, massage: "" });
@@ -28,5 +28,33 @@ export default function useGetData(collectionName, refresh) {
     getData();
   }, [refresh]);
 
-  return { data, isPending, error };
+  const filterData = useMemo(() => {
+    if (filter === null) {
+      return data;
+    }
+    if (filter === "name") {
+      return data.sort(function (a, b) {
+        if (a.name < b.name) {
+          return -1;
+        }
+        if (a.name > b.name) {
+          return 1;
+        }
+        return 0;
+      });
+    }
+    if (filter === "!name") {
+      return data.sort(function (a, b) {
+        if (a.name < b.name) {
+          return 1;
+        }
+        if (a.name > b.name) {
+          return -1;
+        }
+        return 0;
+      });
+    }
+    return data.sort((a, b) => b[`${filter}`] - a[`${filter}`]);
+  }, [filter, data]);
+  return { data, filterData, isPending, error };
 }
