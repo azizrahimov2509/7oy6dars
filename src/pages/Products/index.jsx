@@ -17,6 +17,7 @@ export default function Products() {
         await deleteDoc(doc(db, "products", id));
         setRefresh((prev) => !prev);
         document.getElementById("my_modal_1").closest("dialog").close();
+        window.location.reload();
       } catch (error) {
         console.error("Error deleting product: ", error);
       }

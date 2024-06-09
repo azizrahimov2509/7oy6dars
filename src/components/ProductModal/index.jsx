@@ -28,8 +28,10 @@ function ProductModal({ setRefresh }) {
       image: "",
       rating: "",
     });
-    document.getElementById("my_modal_3").closest("dialog").close();
+    document.getElementById("my_modal_1").showModal();
     setRefresh((prev) => !prev);
+    document.getElementById("my_modal_1").closest("dialog").close();
+    window.location.reload();
   };
   return (
     <dialog id="my_modal_3" className="modal">
@@ -181,6 +183,11 @@ function ProductModal({ setRefresh }) {
           </button>
         </form>
       </div>
+      <dialog id="my_modal_1" className="modal">
+        <div className="modal-box w-fit">
+          <span className="loading loading-spinner loading-lg"></span>
+        </div>
+      </dialog>
     </dialog>
   );
 }
