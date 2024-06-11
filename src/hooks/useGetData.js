@@ -12,9 +12,8 @@ export default function useGetData(collectionName, refresh, filter = "rating") {
         const documents = [];
         const querySnapshot = await getDocs(collection(db, collectionName));
         querySnapshot.forEach((doc) => {
-          // doc.data() is never undefined for query doc snapshots
-          console.log(doc.id, " => ", doc.data());
-          console.log({ id: doc.id, ...doc.data() });
+          // console.log(doc.id, " => ", doc.data());
+          // console.log({ id: doc.id, ...doc.data() });
           documents.push({ id: doc.id, ...doc.data() });
         });
 

@@ -1,10 +1,15 @@
 import React, { useState } from "react";
-import { createUserWithEmailAndPassword } from "firebase/auth";
+import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
 import { auth } from "../../firebase/config";
 import { Link, useNavigate } from "react-router-dom";
 
 function SignUp() {
-  const [formData, setFormData] = useState({ email: "", password: "" });
+  const [formData, setFormData] = useState({
+    email: "",
+    password: "",
+    name: "",
+    photo: "",
+  });
   const [error, setError] = useState("");
   const navigate = useNavigate();
 
@@ -13,9 +18,24 @@ function SignUp() {
     createUserWithEmailAndPassword(auth, formData.email, formData.password)
       .then((userCredential) => {
         const user = userCredential.user;
-        console.log(user);
-        localStorage.setItem("user", JSON.stringify(user));
-        navigate("/");
+        console.log(" SignUpuser:", user);
+
+        updateProfile(user, {
+          displayName: formData.name,
+          photoURL: formData.photo,
+        })
+          .then(() => {
+            console.log("User profile updated:", user);
+            localStorage.setItem(
+              "user",
+              JSON.stringify(auth.currentUser.providerData[0])
+            );
+            navigate("/");
+          })
+          .catch((error) => {
+            console.error("Error updating profile: ", error);
+            setError(error.message);
+          });
       })
       .catch((error) => {
         const errorCode = error.code;
@@ -27,7 +47,7 @@ function SignUp() {
         console.log(error.message);
       });
 
-    setFormData({ email: "", password: "" });
+    setFormData({ email: "", password: "", name: "", photo: "" });
   };
 
   return (
@@ -67,6 +87,38 @@ function SignUp() {
             value={formData.password}
             onChange={(e) =>
               setFormData((prev) => ({ ...prev, password: e.target.value }))
+            }
+            required
+          />
+        </div>
+        <div className="form-control mb-4">
+          <label className="label" htmlFor="name">
+            <span className="label-text">Name</span>
+          </label>
+          <input
+            id="name"
+            type="text"
+            placeholder="Enter your Name..."
+            className="input input-bordered w-full"
+            value={formData.name}
+            onChange={(e) =>
+              setFormData((prev) => ({ ...prev, name: e.target.value }))
+            }
+            required
+          />
+        </div>
+        <div className="form-control mb-4">
+          <label className="label" htmlFor="photo">
+            <span className="label-text">Photo</span>
+          </label>
+          <input
+            id="photo"
+            type="url"
+            placeholder="Enter your image link..."
+            className="input input-bordered w-full"
+            value={formData.photo}
+            onChange={(e) =>
+              setFormData((prev) => ({ ...prev, photo: e.target.value }))
             }
             required
           />

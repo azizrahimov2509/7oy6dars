@@ -1,8 +1,13 @@
 import React, { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { toggleDarkMode, selectDarkMode } from "../../Store/DarkModeSlice";
 import { useNavigate } from "react-router-dom";
 import useGetData from "../../hooks/useGetData";
+import { auth } from "../../firebase/config";
 
 function Header() {
+  const dispatch = useDispatch();
+  const darkMode = useSelector(selectDarkMode);
   const [refresh, setRefresh] = useState(false);
   const {
     data: [data],
@@ -11,6 +16,14 @@ function Header() {
   } = useGetData("cart", refresh);
   const navigate = useNavigate();
   const user = JSON.parse(localStorage.getItem("user"));
+  const [theme, setTheme] = useState(
+    localStorage.getItem("darkmode") || "light"
+  );
+
+  useEffect(() => {
+    document.documentElement.setAttribute("data-theme", theme);
+    localStorage.setItem("darkmode", theme);
+  }, [theme]);
 
   useEffect(() => {
     if (!user) {
@@ -23,18 +36,13 @@ function Header() {
     navigate("/login");
   };
 
-  const [theme, setTheme] = useState(
-    localStorage.getItem("darkmode") || "light"
-  );
-
-  useEffect(() => {
-    document.documentElement.setAttribute("data-theme", theme);
-    localStorage.setItem("darkmode", theme);
-  }, [theme]);
-
-  const handleToggle = () => {
-    setTheme(theme === "dark" ? "light" : "dark");
+  const handleToggleDarkMode = () => {
+    const newTheme = theme === "light" ? "dark" : "light";
+    setTheme(newTheme);
+    dispatch(toggleDarkMode());
   };
+  const user1 = auth?.currentUser?.providerData[0];
+  console.log(user1);
 
   return (
     <header className="bg-base-300">
@@ -74,32 +82,56 @@ function Header() {
               <li>
                 <a>About</a>
               </li>
-              <li>
-                <button onClick={handleLogout}>Log out</button>
-              </li>
             </ul>
+          </div>
+          <div className="dropdown  ml-5">
+            <div
+              tabIndex={0}
+              role="button"
+              className="btn btn-ghost btn-circle"
+            >
+              {user && user.photoURL ? (
+                <img src={user.photoURL} alt="user icon" width={40} />
+              ) : (
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="h-7 w-7"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth="2"
+                    d="M12 14.5a5 5 0 1 0-10 0 5 5 0 0 0 10 0zM14.5 3a3.5 3.5 0 1 1-7 0 3.5 3.5 0 0 1 7 0zM12 14.5a5 5 0 1 0-10 0 5 5 0 0 0 10 0zM20.5 14.5a3.5 3.5 0 1 1-7 0 3.5 3.5 0 0 1 7 0z"
+                  />
+                </svg>
+              )}
+            </div>
+            <div
+              tabIndex={0}
+              className="mt-3 z-[1] card card-compact dropdown-content w-52 bg-base-100 shadow"
+            >
+              <div className="card-body">
+                <p>Name: {user.displayName}</p>
+                <p>Email: {user.email}</p>
+                <div className="card-actions">
+                  <button
+                    className="btn btn-sm btn-primary btn-block"
+                    onClick={handleLogout}
+                  >
+                    Log out
+                  </button>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
         <div className="navbar-center">
           <a className="btn btn-ghost text-xl">Rahimov</a>
         </div>
         <div className="navbar-end">
-          <button className="btn btn-ghost btn-circle">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              className="h-5 w-5"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth="2"
-                d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-              />
-            </svg>
-          </button>
           <div className="indicator">
             <div className="dropdown dropdown-end">
               <div
@@ -156,8 +188,8 @@ function Header() {
             <input
               type="checkbox"
               className="theme-controller"
-              onChange={handleToggle}
-              checked={theme === "light"}
+              onChange={handleToggleDarkMode}
+              checked={darkMode}
             />
             <svg
               className="swap-off fill-current w-10 h-10"

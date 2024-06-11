@@ -14,8 +14,12 @@ function Login() {
     signInWithEmailAndPassword(auth, loginData.email, loginData.password)
       .then((userCredential) => {
         const user = userCredential.user;
-        console.log("Login", user);
-        localStorage.setItem("user", JSON.stringify(user));
+        const userData = {
+          displayName: user.displayName,
+          email: user.email,
+          photoURL: user.photoURL,
+        };
+        localStorage.setItem("user", JSON.stringify(userData));
         navigate("/");
       })
       .catch((error) => {
