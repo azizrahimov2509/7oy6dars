@@ -19,7 +19,7 @@ function Header() {
   const [theme, setTheme] = useState(
     localStorage.getItem("darkmode") || "light"
   );
-
+  const { products } = useSelector((state) => state.cart);
   useEffect(() => {
     document.documentElement.setAttribute("data-theme", theme);
     localStorage.setItem("darkmode", theme);
@@ -155,10 +155,7 @@ function Header() {
                     />
                   </svg>
                   <span className="badge badge-primary badge-sm indicator-item">
-                    {data?.products.reduce(
-                      (acc, item) => acc + item.count,
-                      0
-                    ) ?? 0}
+                    {products?.reduce((acc, item) => acc + item.count, 0) ?? 0}
                   </span>
                 </div>
               </div>
@@ -168,10 +165,7 @@ function Header() {
               >
                 <div className="card-body">
                   <span className="font-bold text-lg">
-                    {data?.products.reduce(
-                      (acc, item) => acc + item.count,
-                      0
-                    ) ?? 0}{" "}
+                    {products?.reduce((acc, item) => acc + item.count, 0) ?? 0}{" "}
                     Items
                   </span>
                   <div className="card-actions">
